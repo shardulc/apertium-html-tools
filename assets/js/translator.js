@@ -103,7 +103,7 @@ if(modeEnabled('translation')) {
             updatePairList();
             populateTranslationList();
             persistChoices('translator');
-            $('#chooseChain').toggleClass("hide", !$('#chainedTranslation').prop('checked'));
+            $('#chooseChain').toggleClass('hide', !$('#chainedTranslation').prop('checked'));
         });
 
         var timer,
@@ -302,18 +302,18 @@ if(modeEnabled('translation')) {
 }
 
 function initChainGraph() {
-    var choose = d3.select("#chooseModalBody");
+    var choose = d3.select('#chooseModalBody');
     svg = choose
-        .append("svg")
-        .attr("width", "800px")
-        .attr("height", "550px");
-    var rect = d3.select("svg").node().getBoundingClientRect();
+        .append('svg')
+        .attr('width', '800px')
+        .attr('height', '550px');
+    var rect = d3.select('svg').node().getBoundingClientRect();
     width = 800;
     height = 550;
     nodeSize = 20;
-    choose.append("br");
-    choose.append("b").text("Valid Paths:");
-    choose.append("div").attr("id", "validPaths");
+    choose.append('br');
+    choose.append('b').text('Valid Paths:');
+    choose.append('div').attr('id', 'validPaths');
 
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
@@ -338,9 +338,9 @@ function initChainGraph() {
         .attr('fill', '#999');
 
     simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(function (d) { return d.id; }).distance(nodeSize * 10))
-        .force("charge", d3.forceManyBody().strength(-700))
-        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force('link', d3.forceLink().id(function (d) { return d.id; }).distance(nodeSize * 10))
+        .force('charge', d3.forceManyBody().strength(-700))
+        .force('center', d3.forceCenter(width / 2, height / 2))
         .alphaDecay(0.018);
 
     refreshChainGraph();
@@ -353,7 +353,7 @@ function boundary(dist, max) {
 }
 
 function clone(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
+    if (null == obj || 'object' != typeof obj) return obj;
     var copy = obj.constructor();
     for (var attr in obj) {
         if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
@@ -398,9 +398,9 @@ function displayPaths(paths) {
         for (var j = 0; j < paths[i].length; j++) {
             var lang = paths[i][j];
             if (ids.indexOf(lang) == -1) {
-                if (lang == source) nodes.push({"id": lang, "fx": 3 * width / 10, "fy": 350});
-                else if (lang == target) nodes.push({"id": lang, "fx": 7 * width / 10, "fy": 350});
-                else nodes.push({"id": lang});
+                if (lang == source) nodes.push({'id': lang, 'fx': 3 * width / 10, 'fy': 350});
+                else if (lang == target) nodes.push({'id': lang, 'fx': 7 * width / 10, 'fy': 350});
+                else nodes.push({'id': lang});
                 ids.push(lang);
             }
         }
@@ -416,79 +416,79 @@ function displayPaths(paths) {
     var i = 0;
     while (i < graph.links.length) {
         var link = graph.links[i];
-        var src = link["sourceLanguage"];
-        var trgt = link["targetLanguage"];
+        var src = link['sourceLanguage'];
+        var trgt = link['targetLanguage'];
         if ((ids.indexOf(src) != -1) && (ids.indexOf(trgt) != -1)) {
             if (backForth(src, trgt)) {
                 if ((bfs.indexOf(src + trgt) == -1) && (bfs.indexOf(trgt + src) == -1)) {
                     bfs.push(src + trgt);
-                    graph.links[i] = {"source": src, "target": trgt, "right": true, "left": true};
+                    graph.links[i] = {'source': src, 'target': trgt, 'right': true, 'left': true};
                     i++;
                 }
                 else graph.links.splice(i, 1);
             }
             else {
-                graph.links[i] = {"source": src, "target": trgt, "right": true};
+                graph.links[i] = {'source': src, 'target': trgt, 'right': true};
                 i++;
             }
         }
         else graph.links.splice(i, 1);
     }
 
-    var link = svg.append("g")
-        .attr("class", "links")
-      .selectAll("path")
+    var link = svg.append('g')
+        .attr('class', 'links')
+      .selectAll('path')
       .data(graph.links)
-      .enter().append("path")
+      .enter().append('path')
       .style('marker-start', function (d) { return d.left ? 'url(#start-arrow)' : ''; })
       .style('marker-end', function (d) { return d.right ? 'url(#end-arrow)' : ''; })
-      .attr("id", function (d) { return d.source + "-" + d.target; })
+      .attr('id', function (d) { return d.source + '-' + d.target; })
       .classed('some_path', false)
       .classed('all_path', false);
 
-    var node = svg.append("g")
-        .attr("class", "nodes")
-      .selectAll("g")
+    var node = svg.append('g')
+        .attr('class', 'nodes')
+      .selectAll('g')
       .data(graph.nodes)
-      .enter().append("g");
+      .enter().append('g');
 
-    var circ = node.append("circle");
+    var circ = node.append('circle');
     circ
-        .attr("r", nodeSize)
-        .attr("id", function (d) { return d.id; })
-        .classed("endpoint", function (d) { return (d.id == source || d.id == target); })
+        .attr('r', nodeSize)
+        .attr('id', function (d) { return d.id; })
+        .classed('endpoint', function (d) { return (d.id == source || d.id == target); })
         .call(d3.drag()
-            .on("start", dragStarted)
-            .on("drag", dragged)
-            .on("end", dragEnded))
-        .on("click", nodeClicked)
-        .append("title").text(function (d) { return d.id; });
+            .on('start', dragStarted)
+            .on('drag', dragged)
+            .on('end', dragEnded))
+        .on('click', nodeClicked)
+        .append('title').text(function (d) { return d.id; });
     node
-        .append("text")
-        .attr("class", "langs")
+        .append('text')
+        .attr('class', 'langs')
         .text(function (d) { return d.id; });
 
     simulation
         .nodes(graph.nodes)
-        .on("tick", ticked);
+        .on('tick', ticked);
 
     simulation
-        .force("link")
+        .force('link')
         .links(graph.links);
 
-    var text = node.selectAll("text");
+    var text = node.selectAll('text');
     function ticked() {
         circ
-            .attr("cx", function (d) {
+            .attr('cx', function (d) {
                 d.x = boundary(d.x, width);
                 d.y = boundary(d.y, height);
                 return d.x;
             })
-            .attr("cy", function (d) { return d.y; });
+            .attr('cy', function (d) { return d.y; });
         text
-            .attr("x", function (d) { return boundary(d.x, width); })
-            .attr("y", function (d) { return boundary(d.y, height); })
-            .attr("dy", 5);
+            .attr('x', function (d) { return boundary(d.x, width); })
+            .attr('y', function (d) { return boundary(d.y, height); })
+            .attr('dy', 5);
         link.attr('d', function (d) {
             var srcx = boundary(d.source.x, width),
                 srcy = boundary(d.source.y, height),
@@ -511,15 +511,15 @@ function displayPaths(paths) {
 }
 
 function refreshChainGraph() {
-    d3.selectAll("svg > g").remove();
-    d3.selectAll("#validPaths > a").remove();
+    d3.selectAll('svg > g').remove();
+    d3.selectAll('#validPaths > a').remove();
     chosenPath = [curSrcLang, curDstLang];
     var tmpSeens = {};
     tmpSeens[curSrcLang] = [];
     curPaths = paths(curSrcLang, curDstLang, [curSrcLang], tmpSeens);
     displayPaths(curPaths);
     simulation.alpha(1).restart();
-    d3.select(".endpoint").dispatch("click");
+    d3.select('.endpoint').dispatch('click');
 }
 
 function dragStarted(d) {
@@ -546,39 +546,39 @@ function dragEnded(d) {
 function nodeClicked(d) {
     var curSel = !d3.select(this).classed('selected');
     d3.select(this).classed('selected', curSel);
-    d3.selectAll("path").classed("some_path", false);
-    d3.selectAll("path").classed("all_path", false);
-    d3.selectAll("#validPaths > a").remove();
+    d3.selectAll('path').classed('some_path', false);
+    d3.selectAll('path').classed('all_path', false);
+    d3.selectAll('#validPaths > a').remove();
 
     var highPaths = [];
     curPaths.forEach(function (d) {
         var some = false, all = true;
         for (var i = 1; i < d.length - 1; i++) {
-            if (d3.select("#" + d[i]).classed("selected")) some = true;
+            if (d3.select('#' + d[i]).classed('selected')) some = true;
             else all = false;
         }
-        highPaths.push({"path": d, "some": some, "all": all});
+        highPaths.push({'path': d, 'some': some, 'all': all});
     });
     highPaths.forEach(function (d) {
-        var path = d["path"];
-        if (d["some"]) {
+        var path = d.path;
+        if (d.some) {
             for (var i = 0; i < path.length - 1; i++) {
-                d3.select("#" + path[i] + "-" + path[i + 1]).classed("some_path", d["some"]);
-                d3.select("#" + path[i + 1] + "-" + path[i]).classed("some_path", d["some"]);
+                d3.select('#' + path[i] + '-' + path[i + 1]).classed('some_path', d.some);
+                d3.select('#' + path[i + 1] + '-' + path[i]).classed('some_path', d.some);
             }
         }
-        if (d["all"]) {
+        if (d.all) {
             for (var i = 0; i < path.length - 1; i++) {
-                d3.select("#" + path[i] + "-" + path[i + 1]).classed("all_path", d["all"]);
-                d3.select("#" + path[i + 1] + "-" + path[i]).classed("all_path", d["all"]);
+                d3.select('#' + path[i] + '-' + path[i + 1]).classed('all_path', d.all);
+                d3.select('#' + path[i + 1] + '-' + path[i]).classed('all_path', d.all);
             }
-            if (d["path"].length > d3.selectAll(".selected").size() - 1) {
-                d3.select("#validPaths")
-                    .append("a")
-                    .attr("data-dismiss", "modal")
-                    .text(d["path"].join(" → "))
-                    .on("click", function (a, b, c) {
-                        chosenPath = c[0].text.split(" → ");
+            if (d.path.length > d3.selectAll('.selected').size() - 1) {
+                d3.select('#validPaths')
+                    .append('a')
+                    .attr('data-dismiss', 'modal')
+                    .text(d.path.join(' → '))
+                    .on('click', function (a, b, validPath) {
+                        chosenPath = validPath[0].text.split(' → ');
                     });
             }
         }
@@ -587,8 +587,8 @@ function nodeClicked(d) {
 
 function onClear(d) {
     d3.selectAll('circle').classed('selected', false);
-    d3.selectAll("path").classed("some_path", false);
-    d3.selectAll("path").classed("all_path", false);
+    d3.selectAll('path').classed('some_path', false);
+    d3.selectAll('path').classed('all_path', false);
 }
 
 function getPairs() {
@@ -779,7 +779,7 @@ function populateTranslationList() {
             if(numSrcLang < srcLangs.length) {
                 var langCode = srcLangs[j], langName = getLangByCode(langCode);
                 $('#srcLanguages .languageCol:eq(' + i + ')')
-                    .append($('<div class="languageName"></div>')
+                    .append($('<div class='languageName'></div>')
                     .attr('data-code', langCode)
                     .text(langName));
             }
@@ -792,7 +792,7 @@ function populateTranslationList() {
             if(numDstLang < dstLangs.length) {
                 langCode = dstLangs[j], langName = getLangByCode(langCode);
                 $('#dstLanguages .languageCol:eq(' + i + ')')
-                    .append($('<div class="languageName"></div>')
+                    .append($('<div class='languageName'></div>')
                     .attr('data-code', langCode)
                     .text(langName));
             }
@@ -1029,7 +1029,7 @@ function translateDoc() {
 function downloadBrowserWarn() {
     if(typeof $bu_getBrowser == 'function') { // eslint-disable-line camelcase
         var detected = $bu_getBrowser();
-        // Show the warning for (what bu calls) "niche" browsers and Safari, but not Chromium:
+        // Show the warning for (what bu calls) 'niche' browsers and Safari, but not Chromium:
         if(detected.n.match(/^[xs]/) && !(navigator.userAgent.match(/Chromium/))) {
             $('#fileDownloadBrowserWarning').show();
         }
@@ -1141,8 +1141,8 @@ function autoSelectDstLang() {
     }
 }
 
-/*:: import {synchronizeTextareaHeights, modeEnabled, ajaxSend, ajaxComplete, filterLangList, onlyUnique, getLangByCode} from "./util.js" */
-/*:: import {persistChoices, restoreChoices} from "./persistence.js" */
-/*:: import localizeInterface from "./localization.js" */
-/*:: import {readCache,cache} from "./cache.js" */
-/*:: import {config} from "./config.js" */
+/*:: import {synchronizeTextareaHeights, modeEnabled, ajaxSend, ajaxComplete, filterLangList, onlyUnique, getLangByCode} from './util.js' */
+/*:: import {persistChoices, restoreChoices} from './persistence.js' */
+/*:: import localizeInterface from './localization.js' */
+/*:: import {readCache,cache} from './cache.js' */
+/*:: import {config} from './config.js' */
