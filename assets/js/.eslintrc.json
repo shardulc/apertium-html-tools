@@ -128,7 +128,8 @@
 					"i", "j", "k",
 					"e", "ev", "xhr", "url", "URL",
 					"a", "b",
-					"tr", "div"
+					"tr", "div",
+                    "d", "x", "y", "cx", "cy", "fx", "fy"
 				]
 			}
 		],

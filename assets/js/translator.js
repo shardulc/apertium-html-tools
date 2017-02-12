@@ -537,13 +537,13 @@ function dragged(d) {
 function dragEnded(d) {
     if (!d3.event.active) simulation.alphaTarget(0);
     d3.select(this).classed('dragging', false);
-    if (!d3.select(this).classed('endpoint')) {
+    if(!d3.select(this).classed('endpoint')) {
         d.fx = null;
         d.fy = null;
     }
 }
 
-function nodeClicked(d) {
+function nodeClicked() {
     var curSel = !d3.select(this).classed('selected');
     d3.select(this).classed('selected', curSel);
     d3.selectAll('path').classed('some_path', false);
@@ -553,7 +553,7 @@ function nodeClicked(d) {
     var highPaths = [];
     curPaths.forEach(function (d) {
         var some = false, all = true;
-        for (var i = 1; i < d.length - 1; i++) {
+        for(var i = 1; i < d.length - 1; i++) {
             if (d3.select('#' + d[i]).classed('selected')) some = true;
             else all = false;
         }
@@ -567,7 +567,7 @@ function nodeClicked(d) {
                 d3.select('#' + path[i + 1] + '-' + path[i]).classed('some_path', d.some);
             }
         }
-        if (d.all) {
+        if(d.all) {
             for (var i = 0; i < path.length - 1; i++) {
                 d3.select('#' + path[i] + '-' + path[i + 1]).classed('all_path', d.all);
                 d3.select('#' + path[i + 1] + '-' + path[i]).classed('all_path', d.all);
@@ -585,11 +585,13 @@ function nodeClicked(d) {
     });
 }
 
+/*
 function onClear(d) {
     d3.selectAll('circle').classed('selected', false);
     d3.selectAll('path').classed('some_path', false);
     d3.selectAll('path').classed('all_path', false);
 }
+*/
 
 function getPairs() {
     var deferred = $.Deferred();
