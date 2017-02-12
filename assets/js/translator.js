@@ -779,7 +779,7 @@ function populateTranslationList() {
             if(numSrcLang < srcLangs.length) {
                 var langCode = srcLangs[j], langName = getLangByCode(langCode);
                 $('#srcLanguages .languageCol:eq(' + i + ')')
-                    .append($('<div class='languageName'></div>')
+                    .append($('<div class="languageName"></div>')
                     .attr('data-code', langCode)
                     .text(langName));
             }
@@ -792,7 +792,7 @@ function populateTranslationList() {
             if(numDstLang < dstLangs.length) {
                 langCode = dstLangs[j], langName = getLangByCode(langCode);
                 $('#dstLanguages .languageCol:eq(' + i + ')')
-                    .append($('<div class='languageName'></div>')
+                    .append($('<div class="languageName"></div>')
                     .attr('data-code', langCode)
                     .text(langName));
             }

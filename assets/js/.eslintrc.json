@@ -3,6 +3,9 @@
 		"browser": true,
 		"jquery": true
 	},
+	"globals": {
+		"d3": false
+	},
 	"extends": "eslint:recommended",
 	"rules": {
 		"array-bracket-spacing": "error",
