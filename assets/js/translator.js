@@ -7,7 +7,9 @@ var recentSrcLangs = [], recentDstLangs = [];
 var droppedFile;
 var textTranslateRequest;
 var curPaths = [], chosenPath = [];
-var svg, simulation, width, height, nodeSize;
+var svg, simulation, width = 800, height = 550, nodeSize = 20;
+var srcLinkPadding = 1.8, dstLinkPadding = 1.8;
+var srcNodeX = 0.3, srcNodeY = 0.6, dstNodeX = 0.7, dstNodeY = 0.6;
 
 var UPLOAD_FILE_SIZE_LIMIT = 32E6,
     TRANSLATION_LIST_BUTTONS = 3,
@@ -305,16 +307,14 @@ function initChainGraph() {
     var choose = d3.select('#chooseModalBody');
     svg = choose
         .append('svg')
-        .attr('width', '800px')
-        .attr('height', '550px');
+        .attr('width', width.toString() + 'px')
+        .attr('height', height.toString() + 'px');
     var rect = d3.select('svg').node().getBoundingClientRect();
-    width = 800;
-    height = 550;
-    nodeSize = 20;
     choose.append('br');
     choose.append('b').text('Valid Paths:');
     choose.append('div').attr('id', 'validPaths');
 
+    /* eslint-disable no-magic-numbers */
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
         .attr('viewBox', '0 -5 10 10')
@@ -342,44 +342,45 @@ function initChainGraph() {
         .force('charge', d3.forceManyBody().strength(-700))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .alphaDecay(0.018);
+    /* eslint-enable no-magic-numbers */
 
     refreshChainGraph();
 }
 
 function boundary(dist, max) {
-    if (dist < nodeSize) return nodeSize;
-    if (dist < max - nodeSize) return dist;
+    if(dist < nodeSize) return nodeSize;
+    if(dist < max - nodeSize) return dist;
     return max - nodeSize;
 }
 
 function clone(obj) {
-    if (null == obj || 'object' != typeof obj) return obj;
+    if(null == obj || 'object' != typeof obj) return obj;
     var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+    for(var attr in obj) {
+        if(obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
     }
     return copy;
 }
 
 function paths(src, trgt, curPath, seens) {
-    if (!originalPairs[src]) return [];
+    if(!originalPairs[src]) return [];
     var rets = [];
-    for (var i = 0; i < originalPairs[src].length; i++) {
+    for(var i = 0; i < originalPairs[src].length; i++) {
         var lang = originalPairs[src][i];
         var newPath = curPath.slice();
         newPath.push(lang);
         var oldSeens = clone(seens);
-        if (lang == trgt) rets.push(newPath);
-        else if (!(lang in seens)) {
+        if(lang == trgt) rets.push(newPath);
+        else if(!(lang in seens)) {
             seens[lang] = [];
             var recurse = paths(lang, trgt, newPath, seens);
-            for (var j = 0; j < recurse.length; j++) {
+            for(var j = 0; j < recurse.length; j++) {
                 rets.push(recurse[j]);
                 seens[lang].push(recurse[j].slice(recurse[j].indexOf(lang)));
             }
         }
         else {
-            for (var j = 0; j < seens[lang].length; j++) {
+            for(var j = 0; j < seens[lang].length; j++) {
                 rets.push(newPath.concat(seens[lang][j]));
             }
         }
@@ -394,12 +395,12 @@ function displayPaths(paths) {
     var ids = [];
     var source = paths[0][0];
     var target = paths[0][paths[0].length - 1];
-    for (var i = 0; i < paths.length; i++) {
-        for (var j = 0; j < paths[i].length; j++) {
+    for(var i = 0; i < paths.length; i++) {
+        for(var j = 0; j < paths[i].length; j++) {
             var lang = paths[i][j];
-            if (ids.indexOf(lang) == -1) {
-                if (lang == source) nodes.push({'id': lang, 'fx': 3 * width / 10, 'fy': 350});
-                else if (lang == target) nodes.push({'id': lang, 'fx': 7 * width / 10, 'fy': 350});
+            if(ids.indexOf(lang) == -1) {
+                if(lang == source) nodes.push({'id': lang, 'fx': srcNodeX * width, 'fy': srcNodeY * height});
+                else if(lang == target) nodes.push({'id': lang, 'fx': dstNodeX * width, 'fy': dstNodeY * height});
                 else nodes.push({'id': lang});
                 ids.push(lang);
             }
@@ -418,9 +419,9 @@ function displayPaths(paths) {
         var link = graph.links[i];
         var src = link['sourceLanguage'];
         var trgt = link['targetLanguage'];
-        if ((ids.indexOf(src) != -1) && (ids.indexOf(trgt) != -1)) {
-            if (backForth(src, trgt)) {
-                if ((bfs.indexOf(src + trgt) == -1) && (bfs.indexOf(trgt + src) == -1)) {
+        if((ids.indexOf(src) != -1) && (ids.indexOf(trgt) != -1)) {
+            if(backForth(src, trgt)) {
+                if((bfs.indexOf(src + trgt) == -1) && (bfs.indexOf(trgt + src) == -1)) {
                     bfs.push(src + trgt);
                     graph.links[i] = {'source': src, 'target': trgt, 'right': true, 'left': true};
                     i++;
@@ -450,22 +451,25 @@ function displayPaths(paths) {
         .attr('class', 'nodes')
       .selectAll('g')
       .data(graph.nodes)
-      .enter().append('g');
+      .enter()
+      .append('g');
 
     var circ = node.append('circle');
     circ
         .attr('r', nodeSize)
         .attr('id', function (d) { return d.id; })
-        .classed('endpoint', function (d) { return (d.id == source || d.id == target); })
+        .classed('endpoint', function (d) { return (d.id === source || d.id === target); })
         .call(d3.drag()
             .on('start', dragStarted)
             .on('drag', dragged)
             .on('end', dragEnded))
         .on('click', nodeClicked)
-        .append('title').text(function (d) { return d.id; });
+        .append('title')
+            .text(function (d) { return d.id; });
     node
         .append('text')
         .attr('class', 'langs')
+        .attr('dy', nodeSize / 2 - 5)
         .text(function (d) { return d.id; });
 
     simulation
@@ -487,8 +491,7 @@ function displayPaths(paths) {
             .attr('cy', function (d) { return d.y; });
         text
             .attr('x', function (d) { return boundary(d.x, width); })
-            .attr('y', function (d) { return boundary(d.y, height); })
-            .attr('dy', 5);
+            .attr('y', function (d) { return boundary(d.y, height); });
         link.attr('d', function (d) {
             var srcx = boundary(d.source.x, width),
                 srcy = boundary(d.source.y, height),
@@ -496,11 +499,11 @@ function displayPaths(paths) {
                 trgty = boundary(d.target.y, height);
             var deltaX = trgtx - srcx,
                 deltaY = trgty - srcy,
-                dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+                dist = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)),
                 normX = deltaX / dist,
                 normY = deltaY / dist,
-                sourcePadding = nodeSize * 1.8,
-                targetPadding = nodeSize * 1.8,
+                sourcePadding = nodeSize * srcLinkPadding,
+                targetPadding = nodeSize * dstLinkPadding,
                 sourceX = srcx + (sourcePadding * normX),
                 sourceY = srcy + (sourcePadding * normY),
                 targetX = trgtx - (targetPadding * normX),
@@ -523,7 +526,8 @@ function refreshChainGraph() {
 }
 
 function dragStarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    // eslint-disable-next-line no-magic-numbers
+    if(!d3.event.active) simulation.alphaTarget(0.3).restart();
     d3.select(this).classed('dragging', true);
     d.fx = boundary(d.x, width);
     d.fy = boundary(d.y, height);
@@ -535,7 +539,7 @@ function dragged(d) {
 }
 
 function dragEnded(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
+    if(!d3.event.active) simulation.alphaTarget(0);
     d3.select(this).classed('dragging', false);
     if(!d3.select(this).classed('endpoint')) {
         d.fx = null;
@@ -554,25 +558,25 @@ function nodeClicked() {
     curPaths.forEach(function (d) {
         var some = false, all = true;
         for(var i = 1; i < d.length - 1; i++) {
-            if (d3.select('#' + d[i]).classed('selected')) some = true;
+            if(d3.select('#' + d[i]).classed('selected')) some = true;
             else all = false;
         }
         highPaths.push({'path': d, 'some': some, 'all': all});
     });
     highPaths.forEach(function (d) {
         var path = d.path;
-        if (d.some) {
-            for (var i = 0; i < path.length - 1; i++) {
+        if(d.some) {
+            for(var i = 0; i < path.length - 1; i++) {
                 d3.select('#' + path[i] + '-' + path[i + 1]).classed('some_path', d.some);
                 d3.select('#' + path[i + 1] + '-' + path[i]).classed('some_path', d.some);
             }
         }
         if(d.all) {
-            for (var i = 0; i < path.length - 1; i++) {
+            for(var i = 0; i < path.length - 1; i++) {
                 d3.select('#' + path[i] + '-' + path[i + 1]).classed('all_path', d.all);
                 d3.select('#' + path[i + 1] + '-' + path[i]).classed('all_path', d.all);
             }
-            if (d.path.length > d3.selectAll('.selected').size() - 1) {
+            if(d.path.length > d3.selectAll('.selected').size() - 1) {
                 d3.select('#validPaths')
                     .append('a')
                     .attr('data-dismiss', 'modal')
