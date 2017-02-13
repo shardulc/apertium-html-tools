@@ -370,7 +370,7 @@ function paths(src, trgt, curPath, seens) {
         var newPath = curPath.slice();
         newPath.push(lang);
         var oldSeens = clone(seens);
-        if(lang == trgt) rets.push(newPath);
+        if(lang === trgt) rets.push(newPath);
         else if(!(lang in seens)) {
             seens[lang] = [];
             var recurse = paths(lang, trgt, newPath, seens);
@@ -398,9 +398,9 @@ function displayPaths(paths) {
     for(var i = 0; i < paths.length; i++) {
         for(var j = 0; j < paths[i].length; j++) {
             var lang = paths[i][j];
-            if(ids.indexOf(lang) == -1) {
-                if(lang == source) nodes.push({'id': lang, 'fx': srcNodeX * width, 'fy': srcNodeY * height});
-                else if(lang == target) nodes.push({'id': lang, 'fx': dstNodeX * width, 'fy': dstNodeY * height});
+            if(ids.indexOf(lang) === -1) {
+                if(lang === source) nodes.push({'id': lang, 'fx': srcNodeX * width, 'fy': srcNodeY * height});
+                else if(lang === target) nodes.push({'id': lang, 'fx': dstNodeX * width, 'fy': dstNodeY * height});
                 else nodes.push({'id': lang});
                 ids.push(lang);
             }
@@ -408,20 +408,19 @@ function displayPaths(paths) {
     }
 
     function backForth(src, trgt) {
-        return (((src in originalPairs) ? (originalPairs[src].indexOf(trgt) != -1) : true) && ((trgt in originalPairs) ? (originalPairs[trgt].indexOf(src) != -1) : true));
+        return (((src in originalPairs) ? (originalPairs[src].indexOf(trgt) !== -1) : true) && ((trgt in originalPairs) ? (originalPairs[trgt].indexOf(src) !== -1) : true));
     }
 
     graph.nodes = nodes;
     graph.links = rawPairs.slice();
     var bfs = [];
     var i = 0;
-    while (i < graph.links.length) {
-        var link = graph.links[i];
-        var src = link['sourceLanguage'];
-        var trgt = link['targetLanguage'];
-        if((ids.indexOf(src) != -1) && (ids.indexOf(trgt) != -1)) {
+    while(i < graph.links.length) {
+        var src = graph.links[i].sourceLanguage;
+        var trgt = graph.links[i].targetLanguage;
+        if((ids.indexOf(src) !== -1) && (ids.indexOf(trgt) !== -1)) {
             if(backForth(src, trgt)) {
-                if((bfs.indexOf(src + trgt) == -1) && (bfs.indexOf(trgt + src) == -1)) {
+                if((bfs.indexOf(src + trgt) === -1) && (bfs.indexOf(trgt + src) === -1)) {
                     bfs.push(src + trgt);
                     graph.links[i] = {'source': src, 'target': trgt, 'right': true, 'left': true};
                     i++;
@@ -440,7 +439,8 @@ function displayPaths(paths) {
         .attr('class', 'links')
       .selectAll('path')
       .data(graph.links)
-      .enter().append('path')
+      .enter()
+      .append('path')
       .style('marker-start', function (d) { return d.left ? 'url(#start-arrow)' : ''; })
       .style('marker-end', function (d) { return d.right ? 'url(#end-arrow)' : ''; })
       .attr('id', function (d) { return d.source + '-' + d.target; })
@@ -572,7 +572,7 @@ function nodeClicked() {
             }
         }
         if(d.all) {
-            for(var i = 0; i < path.length - 1; i++) {
+            for(i = 0; i < path.length - 1; i++) {
                 d3.select('#' + path[i] + '-' + path[i + 1]).classed('all_path', d.all);
                 d3.select('#' + path[i + 1] + '-' + path[i]).classed('all_path', d.all);
             }

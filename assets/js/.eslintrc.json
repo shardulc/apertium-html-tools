@@ -14,7 +14,6 @@
 		"camelcase": "error",
 		"comma-dangle": "error",
 		"comma-spacing": "error",
-		"curly": "error",
 		"eol-last": "error",
 		"key-spacing": "error",
 		"linebreak-style": "error",
@@ -46,6 +45,7 @@
 		"space-infix-ops": "error",
 		"spaced-comment": "error",
 		"yoda": "error",
+		"curly": ["error", "multi-line"],
 		"eqeqeq": ["error", "smart"],
 		"func-style": ["error", "declaration"],
 		"indent": ["error", 4],
@@ -129,7 +129,8 @@
 					"e", "ev", "xhr", "url", "URL",
 					"a", "b",
 					"tr", "div",
-                    "d", "x", "y", "cx", "cy", "fx", "fy"
+                    "d", "x", "y", "cx", "cy", "fx", "fy",
+                    "src", "all"
 				]
 			}
 		],
