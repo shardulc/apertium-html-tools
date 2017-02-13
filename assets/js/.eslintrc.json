@@ -123,14 +123,13 @@
 		"id-blacklist": ["error", "value", "val", "key"],
 		"id-length": [
 			"error", {
-				"min": 4,
+				"min": 3,
 				"exceptions": [
 					"i", "j", "k",
-					"e", "ev", "xhr", "url", "URL",
+					"e", "ev",
 					"a", "b",
-					"tr", "div",
-                    "d", "x", "y", "cx", "cy", "fx", "fy",
-                    "src", "all"
+					"tr",
+                    "d", "x", "y", "cx", "cy", "fx", "fy"
 				]
 			}
 		],

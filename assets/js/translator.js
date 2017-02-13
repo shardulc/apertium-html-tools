@@ -309,7 +309,6 @@ function initChainGraph() {
         .append('svg')
         .attr('width', width.toString() + 'px')
         .attr('height', height.toString() + 'px');
-    var rect = d3.select('svg').node().getBoundingClientRect();
     choose.append('br');
     choose.append('b').text('Valid Paths:');
     choose.append('div').attr('id', 'validPaths');
@@ -353,34 +352,26 @@ function boundary(dist, max) {
     return max - nodeSize;
 }
 
-function clone(obj) {
-    if(null == obj || 'object' != typeof obj) return obj;
-    var copy = obj.constructor();
-    for(var attr in obj) {
-        if(obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
-    }
-    return copy;
-}
-
 function paths(src, trgt, curPath, seens) {
     if(!originalPairs[src]) return [];
     var rets = [];
-    for(var i = 0; i < originalPairs[src].length; i++) {
+    var i, j;
+    for(i = 0; i < originalPairs[src].length; i++) {
         var lang = originalPairs[src][i];
         var newPath = curPath.slice();
         newPath.push(lang);
-        var oldSeens = clone(seens);
+        var oldSeens = $.extend(true, {}, seens);
         if(lang === trgt) rets.push(newPath);
         else if(!(lang in seens)) {
             seens[lang] = [];
             var recurse = paths(lang, trgt, newPath, seens);
-            for(var j = 0; j < recurse.length; j++) {
+            for(j = 0; j < recurse.length; j++) {
                 rets.push(recurse[j]);
                 seens[lang].push(recurse[j].slice(recurse[j].indexOf(lang)));
             }
         }
         else {
-            for(var j = 0; j < seens[lang].length; j++) {
+            for(j = 0; j < seens[lang].length; j++) {
                 rets.push(newPath.concat(seens[lang][j]));
             }
         }
@@ -395,7 +386,8 @@ function displayPaths(paths) {
     var ids = [];
     var source = paths[0][0];
     var target = paths[0][paths[0].length - 1];
-    for(var i = 0; i < paths.length; i++) {
+    var i = 0;
+    for(i = 0; i < paths.length; i++) {
         for(var j = 0; j < paths[i].length; j++) {
             var lang = paths[i][j];
             if(ids.indexOf(lang) === -1) {
@@ -408,13 +400,14 @@ function displayPaths(paths) {
     }
 
     function backForth(src, trgt) {
-        return (((src in originalPairs) ? (originalPairs[src].indexOf(trgt) !== -1) : true) && ((trgt in originalPairs) ? (originalPairs[trgt].indexOf(src) !== -1) : true));
+        return (((src in originalPairs) ? (originalPairs[src].indexOf(trgt) !== -1) : true)
+                && ((trgt in originalPairs) ? (originalPairs[trgt].indexOf(src) !== -1) : true));
     }
 
     graph.nodes = nodes;
     graph.links = rawPairs.slice();
     var bfs = [];
-    var i = 0;
+    i = 0;
     while(i < graph.links.length) {
         var src = graph.links[i].sourceLanguage;
         var trgt = graph.links[i].targetLanguage;
@@ -564,9 +557,10 @@ function nodeClicked() {
         highPaths.push({'path': d, 'some': some, 'all': all});
     });
     highPaths.forEach(function (d) {
+        var i;
         var path = d.path;
         if(d.some) {
-            for(var i = 0; i < path.length - 1; i++) {
+            for(i = 0; i < path.length - 1; i++) {
                 d3.select('#' + path[i] + '-' + path[i + 1]).classed('some_path', d.some);
                 d3.select('#' + path[i + 1] + '-' + path[i]).classed('some_path', d.some);
             }
