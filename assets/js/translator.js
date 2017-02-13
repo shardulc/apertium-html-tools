@@ -7,7 +7,7 @@ var recentSrcLangs = [], recentDstLangs = [];
 var droppedFile;
 var textTranslateRequest;
 var curPaths = [], chosenPath = [];
-var svg, simulation, width = 800, height = 550, nodeSize = 20;
+var svg, simulation, width = 800, height = 550, nodeSize = 20, nodeTextY = 5;
 var srcLinkPadding = 1.8, dstLinkPadding = 1.8;
 var srcNodeX = 0.3, srcNodeY = 0.6, dstNodeX = 0.7, dstNodeY = 0.6;
 
@@ -400,8 +400,8 @@ function displayPaths(paths) {
     }
 
     function backForth(src, trgt) {
-        return (((src in originalPairs) ? (originalPairs[src].indexOf(trgt) !== -1) : true)
-                && ((trgt in originalPairs) ? (originalPairs[trgt].indexOf(src) !== -1) : true));
+        return (((src in originalPairs) ? (originalPairs[src].indexOf(trgt) !== -1) : true) &&
+                ((trgt in originalPairs) ? (originalPairs[trgt].indexOf(src) !== -1) : true));
     }
 
     graph.nodes = nodes;
@@ -462,7 +462,7 @@ function displayPaths(paths) {
     node
         .append('text')
         .attr('class', 'langs')
-        .attr('dy', nodeSize / 2 - 5)
+        .attr('dy', nodeTextY)
         .text(function (d) { return d.id; });
 
     simulation
